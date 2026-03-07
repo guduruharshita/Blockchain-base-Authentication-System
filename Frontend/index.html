@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title> Login System </title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #2c3e50, #3498db);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #ffffff10;
+      padding: 40px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+      text-align: center;
+      width: 400px;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      font-size: 32px;
+      color: #ecf0f1;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 10px;
+      background-color: #34495e;
+      color: #fff;
+      font-size: 16px;
+    }
+
+    input:focus {
+      outline: none;
+      box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 10px;
+      background-color: #1abc9c;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #16a085;
+    }
+
+    .admin-section {
+      display: none;
+      margin-top: 20px;
+    }
+
+    #userStats, #message {
+      margin-top: 15px;
+      color: #ecf0f1;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔐 Login System </h1>
+    <button onclick="connectWallet()">Connect Wallet</button>
+    <br><br>
+    <button onclick="location.href='register.html'">Register</button>
+    <button onclick="location.href='login.html'">Login</button>
+    <button onclick="location.href='resetPassword.html'">Reset Password</button>
+    <button onclick="location.href='deactivateAccount.html'">Deactivate Account</button>
+    <div class="admin-section" id="adminSection">
+      <input type="text" id="banAddress" placeholder="User Address to Ban" required>
+      <button onclick="banUser()">banUser</button>
+    </div>
+    <div id="userStats"></div>
+    <p id="message"></p>
+  </div>
+
+  <script>
+    let contract;
+    let signer;
+
+    async function connectWallet() {
+      if (window.ethereum) {
+        try {
+          await window.ethereum.request({ method: 'eth_requestAccounts' });
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          signer = provider.getSigner();
+          const address = await signer.getAddress();
+          document.getElementById('message').innerText = `Connected: ${address.slice(0, 6)}...${address.slice(-4)}`;
+          await initContract();
+          const adminAddress = await contract.admin();
+          if (address.toLowerCase() === adminAddress.toLowerCase()) {
+            document.getElementById('adminSection').style.display = 'block';
+          }
+          updateUserStats();
+        } catch (error) {
+          document.getElementById('message').innerText = `Connection Error: ${error.message}`;
+        }
+      } else {
+        document.getElementById('message').innerText = 'Please install MetaMask!';
+      }
+    }
+
+    async function initContract() {
+      const contractAddress = "0x322Ac02Fb4506E4476b5122A6359d2550C2f6854"; 
+      const contractABI = [
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "userAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "username",
+              "type": "string"
+            }
+          ],
+          "name": "UserSignedUp",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "userAddress",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "bool",
+              "name": "success",
+              "type": "bool"
+            }
+          ],
+          "name": "LoginAttempt",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "userAddress",
+              "type": "address"
+            }
+          ],
+          "name": "PasswordReset",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "userAddress",
+              "type": "address"
+            }
+          ],
+          "name": "UserDeactivated",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "userAddress",
+              "type": "address"
+            }
+          ],
+          "name": "UserBanned",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "admin",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_user",
+              "type": "address"
+            }
+          ],
+          "name": "banUser",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "deactivateAccount",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_userAddress",
+              "type": "address"
+            }
+          ],
+          "name": "getUser",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "username",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "registrationTimestamp",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "exists",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "isBanned",
+              "type": "bool"
+            },
+            {
+              "internalType": "string",
+              "name": "password",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "_password",
+              "type": "string"
+            }
+          ],
+          "name": "login",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "_username",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "_password",
+              "type": "string"
+            }
+          ],
+          "name": "register",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "_newPassword",
+              "type": "string"
+            }
+          ],
+          "name": "resetPassword",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ];
+      contract = new ethers.Contract(contractAddress, contractABI, signer);
+    }
+
+    async function banUser() {
+      const banAddress = document.getElementById('banAddress').value;
+      try {
+        await initContract();
+        const tx = await contract.banUser(banAddress, { gasLimit: 1000000 });
+        await tx.wait();
+        document.getElementById('message').innerText = `banUser Successful for ${banAddress.slice(0, 6)}...${banAddress.slice(-4)}`;
+        updateUserStats();
+      } catch (error) {
+        document.getElementById('message').innerText = `banUser Error: ${error.message}`;
+      }
+    }
+
+    async function updateUserStats() {
+      if (contract && signer) {
+        const address = await signer.getAddress();
+        const [username, registrationTimestamp, exists, isBanned, password] = await contract.getUser(address);
+        if (exists) {
+          const regTime = new Date(registrationTimestamp * 1000).toLocaleString();
+          document.getElementById('userStats').innerText = `Profile: ${username} | Joined: ${regTime} | Status: ${isBanned ? 'Banned' : 'Active'} | Password: ${password}`;
+        } else {
+          document.getElementById('userStats').innerText = 'No Profile Data';
+        }
+      }
+    }
+  </script>
+</body>
+</html>
+
+

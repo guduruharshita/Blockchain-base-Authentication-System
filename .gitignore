@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+Backend/node_modules/
+
+# Logs
+*.log
+authchain_logs.txt
+npm-debug.log*
+
+# Database
+*.db
+authchain.db
+*.sqlite
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+dist/
+build/
+
+# Test
+coverage/
+.nyc_output/
+
+# Temporary
+tmp/
+temp/
+

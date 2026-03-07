@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register - AuthChain</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <style>
+    body {
+      background: #34495e;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .form-container {
+      background: #2c3e50;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      width: 300px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+    }
+    button {
+      background: #1abc9c;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Register</h2>
+    <input type="text" placeholder="Username" id="username">
+    <input type="password" placeholder="Password" id="password">
+    <button onclick="registerUser()">Submit</button>
+  </div>
+
+  <script>
+    async function registerUser() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      if (!window.ethereum) {
+        alert("Please install MetaMask!");
+        return;
+      }
+
+      try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const address = await signer.getAddress();
+        console.log("Connected with address:", address);
+
+        const contractAddress = "0x322Ac02Fb4506E4476b5122A6359d2550C2f6854";
+        const contractABI = [
+          {
+            "inputs": [
+              {"internalType": "string", "name": "_username", "type": "string"},
+              {"internalType": "string", "name": "_password", "type": "string"}
+            ],
+            "name": "register",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          }
+        ];
+        const contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+        console.log("Registering with:", { username, password });
+        const tx = await contract.register(username, password, { gasLimit: 2000000 });
+        console.log("Transaction sent, hash:", tx.hash);
+        alert("Waiting for transaction confirmation...");
+        await tx.wait();
+        alert("User registered successfully!");
+
+        try {
+          const response = await fetch('http://localhost:3000/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userAddress: address, username })
+          });
+          const result = await response.json();
+          console.log("Backend registration log:", result);
+        } catch (error) {
+          console.error("Error logging registration to backend:", error);
+        }
+      } catch (error) {
+        console.error("Registration error:", error);
+        alert("Registration failed: " + (error.message || "Unknown error"));
+      }
+    }
+  </script>
+</body>
+</html>

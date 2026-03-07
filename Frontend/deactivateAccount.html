@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Deactivate Account - AuthChain</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <style>
+    body {
+      background: #2d3436;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .form-container {
+      background: #636e72;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      width: 300px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+      background: #d63031;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Deactivate Account</h2>
+    <button onclick="deactivateAccount()">Deactivate</button>
+  </div>
+  <script>
+    async function deactivateAccount() {
+      if (!window.ethereum) {
+        alert("Please install MetaMask!");
+        return;
+      }
+
+      try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const address = await signer.getAddress();
+        console.log("Connected with address:", address);
+
+        const contractAddress = "0x322Ac02Fb4506E4476b5122A6359d2550C2f6854";
+        const contractABI = [
+          {
+            "inputs": [],
+            "name": "deactivateAccount",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          }
+        ];
+        const contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+        console.log("Deactivating account for address:", address);
+        const tx = await contract.deactivateAccount({ gasLimit: 2000000 });
+        console.log("Transaction sent, hash:", tx.hash);
+        alert("Waiting for transaction confirmation...");
+        await tx.wait();
+        alert("Account deactivated successfully!");
+
+        // Log deactivation to backend
+        try {
+          const response = await fetch('http://localhost:3000/api/deactivate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userAddress: address })
+          });
+          const result = await response.json();
+          console.log("Backend deactivation log:", result);
+        } catch (error) {
+          console.error("Error logging deactivation to backend:", error);
+        }
+      } catch (error) {
+        console.error("Deactivation error:", error);
+        alert("Deactivation failed: " + (error.message || "Unknown error"));
+      }
+    }
+  </script>
+</body>
+</html>
+
