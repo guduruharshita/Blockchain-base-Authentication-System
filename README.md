@@ -1,201 +1,93 @@
-# 🔐 Blockchain Login System
+# 🔐 AuthChain — Blockchain-Based Authentication System
 
-A decentralized authentication system that combines Ethereum blockchain technology with traditional web services for secure user authentication.
-
-## 📋 Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Architecture](#architecture)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [API Endpoints](#api-endpoints)
-- [Smart Contract](#smart-contract)
-- [Frontend Pages](#frontend-pages)
-- [Database Schema](#database-schema)
-- [Security Considerations](#security-considerations)
-- [License](#license)
+[![Solidity](https://img.shields.io/badge/Solidity-0.8.20-363636?style=flat&logo=solidity&logoColor=white)](https://soliditylang.org)
+[![Node.js](https://img.shields.io/badge/Node.js-14+-339933?style=flat&logo=nodedotjs&logoColor=white)](https://nodejs.org)
+[![Ethers.js](https://img.shields.io/badge/Ethers.js-5.7-2535A0?style=flat)](https://docs.ethers.io)
+[![Express](https://img.shields.io/badge/Express-5.1-000000?style=flat&logo=express&logoColor=white)](https://expressjs.com)
+[![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat&logo=sqlite&logoColor=white)](https://sqlite.org)
+[![MetaMask](https://img.shields.io/badge/MetaMask-F6851B?style=flat&logo=metamask&logoColor=white)](https://metamask.io)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat)](LICENSE)
 
 ---
 
-## 🌟 Overview
+## What It Does
 
-**AuthChain** is a blockchain-based authentication system that leverages Ethereum smart contracts to provide secure, decentralized user registration and login functionality. The system combines the power of Web3 technology with traditional web backend services to create a hybrid authentication mechanism.
+**AuthChain** is a decentralized authentication system that uses Ethereum smart contracts to handle user registration, login, and account management — replacing the traditional username/password database with an immutable on-chain identity layer. A Node.js/Express backend logs all authentication events to SQLite, while a MetaMask-integrated frontend provides the user interface. The system was the subject of a published research paper exploring blockchain as an alternative to centralized identity providers.
 
-### Key Highlights
-
-- 🔗 **Blockchain-Powered**: Uses Ethereum smart contracts for secure identity verification
-- 👛 **Wallet-Based Authentication**: MetaMask wallet integration for seamless user experience
-- 📊 **Event Logging**: Comprehensive logging with SQLite database and file-based logs
-- 🎨 **Modern UI**: Beautiful glassmorphism design with responsive layout
-- 🛡️ **Admin Controls**: Admin functionality to ban users and manage platform
+> 📄 Research paper included in this repository (`Research Paper.pdf`)
 
 ---
 
 ## ✨ Features
 
-### Authentication Features
-- **Wallet Connection**: Connect MetaMask wallet for blockchain-based authentication
-- **User Registration**: Register with username and password stored on blockchain
-- **Secure Login**: Verify credentials against smart contract
-- **Password Reset**: Reset password functionality via smart contract
-- **Account Deactivation**: Self-service account deactivation
-
-### Admin Features
-- **User Ban Management**: Admin can ban malicious users
-- **Event Monitoring**: Track all authentication events
-
-### Logging & Monitoring
-- **Terminal Logging**: Real-time event logging to console
-- **File Logging**: Persistent log files for audit trails
-- **Database Logging**: SQLite database for structured event storage
+- **On-chain identity**: Registration and login verified against an Ethereum smart contract
+- **MetaMask integration**: Wallet-based authentication via Ethers.js
+- **Event audit log**: All auth events logged to SQLite + flat file for compliance
+- **Admin controls**: Ban malicious users directly from the contract
+- **Glassmorphism UI**: Modern, responsive frontend design
 
 ---
 
-## 🛠 Tech Stack
+## 🛠️ Tech Stack
 
-### Frontend
-- **HTML5**: Semantic markup
-- **CSS3**: Modern styling with glassmorphism effects
-- **JavaScript (ES6+)**: Client-side logic
-- **Ethers.js**: Ethereum wallet integration (v5.7.2)
-
-### Backend
-- **Node.js**: JavaScript runtime
-- **Express.js**: Web framework (v5.1.0)
-- **SQLite3**: Lightweight database (v5.1.7)
-
-### Smart Contract
-- **Solidity**: Smart contract language (v0.8.20)
-- **Ethereum**: Blockchain platform
-
----
-
-## 🏗 Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Frontend Layer                            │
-│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐   │
-│  │  Index  │ │ Register│ │  Login  │ │ Reset   │ │Deactivate│  │
-│  │   Page  │ │   Page  │ │   Page  │ │Password │ │ Account │   │
-│  └────┬────┘ └────┬────┘ └────┬────┘ └────┬────┘ └────┬────┘   │
-│       └───────────┴───────────┴───────────┴───────────┘        │
-│                              │                                   │
-│                     Ethers.js (Web3)                            │
-└──────────────────────────────┼──────────────────────────────────┘
-                               │
-┌──────────────────────────────┼──────────────────────────────────┐
-│                     Smart Contract Layer                        │
-│                    ┌─────────────────────┐                     │
-│                    │   AuthChain.sol      │                     │
-│                    │  (Ethereum Mainnet/  │                     │
-│                    │   Testnet)           │                     │
-│                    └─────────────────────┘                     │
-└──────────────────────────────┼──────────────────────────────────┘
-                               │
-┌──────────────────────────────┼──────────────────────────────────┐
-│                       Backend Layer                              │
-│                    ┌─────────────────────┐                     │
-│                    │   Express.js API    │                     │
-│                    └──────────┬──────────┘                     │
-│                               │                                   │
-│         ┌────────────────────┼────────────────────┐            │
-│         │                    │                    │            │
-│    ┌────▼────┐        ┌───────▼───────┐    ┌──────▼──────┐      │
-│    │ SQLite  │        │  Log Files    │    │  Terminal   │      │
-│    │   DB    │        │ (txt files)   │    │   Output    │      │
-│    └─────────┘        └───────────────┘    └─────────────┘      │
-└─────────────────────────────────────────────────────────────────┘
-```
+| Layer | Technology |
+|-------|------------|
+| Smart Contract | Solidity 0.8.20, Ethereum (Sepolia testnet) |
+| Frontend | HTML5, CSS3, JavaScript ES6+, Ethers.js |
+| Backend | Node.js, Express.js 5.x |
+| Database | SQLite3 |
 
 ---
 
 ## 📂 Project Structure
 
 ```
-Blockchain Login System/
-│
-├── 📄 README.md                    # This file
-├── 📄 package.json                 # Root package configuration
-│
-├── 📁 Backend/                     # Backend server
-│   ├── 📄 Backend.js              # Express server with API endpoints
-│   ├── 📄 package.json            # Backend dependencies
-│   ├── 📄 authchain.db            # SQLite database file
-│   └── 📄 authchain_logs.txt      # Event log file
-│
-├── 📁 Frontend/                   # Frontend web pages
-│   ├── 📄 index.html              # Main dashboard
-│   ├── 📄 register.html           # User registration
-│   ├── 📄 login.html              # User login
-│   ├── 📄 resetPassword.html      # Password reset
-│   └── 📄 deactivateAccount.html  # Account deactivation
-│
-└── 📁 Smart Contract/             # Ethereum smart contract
-    └── 📄 Authentication.sol      # AuthChain smart contract
+Blockchain-base-Authentication-System/
+├── Frontend/
+│   ├── index.html              # Dashboard + wallet connect
+│   ├── register.html           # User registration
+│   ├── login.html              # Login page
+│   ├── resetPassword.html      # Password reset
+│   └── deactivateAccount.html  # Account deactivation
+├── Backend/
+│   ├── Backend.js              # Express server + event logging
+│   ├── package.json
+│   ├── authchain.db            # SQLite event log
+│   └── authchain_logs.txt      # Flat file audit log
+├── Smart Contract/
+│   └── Authentication.sol      # AuthChain Solidity contract
+├── Research Paper.pdf
+├── package.json
+└── README.md
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 How to Run Locally
 
 ### Prerequisites
 
-Before running this project, ensure you have:
+- Node.js v14+
+- MetaMask browser extension
+- Test ETH on Sepolia testnet ([faucet](https://sepoliafaucet.com/))
+- [Remix IDE](https://remix.ethereum.org/) for contract deployment
 
-- **Node.js** (v14 or higher) - [Download](https://nodejs.org/)
-- **npm** (comes with Node.js)
-- **MetaMask Browser Extension** - [Install](https://metamask.io/)
-- **Ethereum Wallet** with some test ETH (for testnet) or mainnet ETH
-
-### Recommended Tools
-
-- **Git** for version control
-- **VS Code** or any code editor
-- **Remix IDE** (optional) for smart contract deployment
-
----
-
-## 📥 Installation
-
-### 1. Clone the Repository
+### 1. Clone the repo
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/blockchain-login-system.git
-cd blockchain-login-system
+git clone https://github.com/guduruharshita/Blockchain-base-Authentication-System.git
+cd Blockchain-base-Authentication-System
 ```
 
-### 2. Install Root Dependencies
-
-```bash
-npm install
-```
-
-### 3. Install Backend Dependencies
-
-```bash
-cd Backend
-npm install
-```
-
-### 4. Deploy Smart Contract
-
-Deploy the `Authentication.sol` contract to Ethereum (testnet recommended for development):
+### 2. Deploy the Smart Contract
 
 1. Open [Remix IDE](https://remix.ethereum.org/)
-2. Create a new file and paste the contract code
-3. Compile the contract
-4. Deploy to testnet (Sepolia/Goerli) or local network
+2. Paste `Smart Contract/Authentication.sol`
+3. Compile with Solidity 0.8.20
+4. Deploy to Sepolia testnet via MetaMask
 5. Copy the deployed contract address
-6. Update the `contractAddress` in `Frontend/index.html`
 
-### 5. Configure Frontend
+### 3. Configure the frontend
 
 Update the contract address in `Frontend/index.html`:
 
@@ -203,232 +95,65 @@ Update the contract address in `Frontend/index.html`:
 const contractAddress = "YOUR_DEPLOYED_CONTRACT_ADDRESS";
 ```
 
----
-
-## ⚙️ Configuration
-
-### Environment Variables
-
-Create a `.env` file in the Backend directory:
-
-```env
-PORT=3000
-DATABASE_NAME=authchain.db
-LOG_FILE=authchain_logs.txt
-```
-
-### Smart Contract Configuration
-
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `contractAddress` | Ethereum contract address | Required |
-| `network` | Ethereum network | testnet |
-
----
-
-## 📖 Usage
-
-### Starting the Backend Server
+### 4. Start the backend
 
 ```bash
 cd Backend
+npm install
 node Backend.js
 ```
 
-The server will start on `http://localhost:3000`
+Server runs at `http://localhost:3000`
 
-### Accessing the Frontend
+### 5. Open the app
 
-Open your browser and navigate to:
-```
-http://localhost:3000
-```
-
-### Using the Application
-
-1. **Connect Wallet**: Click "Connect Wallet" to connect your MetaMask
-2. **Register**: Navigate to Register page and create an account
-3. **Login**: Use the Login page to authenticate
-4. **Manage Account**: Reset password or deactivate as needed
+Navigate to `http://localhost:3000` in your browser.
 
 ---
 
 ## 🔌 API Endpoints
 
-The backend provides the following RESTful API endpoints:
-
-### Authentication Events
-
-| Method | Endpoint | Description | Request Body |
-|--------|----------|-------------|--------------|
-| POST | `/api/register` | Log user registration | `{ userAddress, username }` |
-| POST | `/api/login` | Log user login | `{ userAddress }` |
-| POST | `/api/resetPassword` | Log password reset | `{ userAddress }` |
-| POST | `/api/deactivate` | Log account deactivation | `{ userAddress }` |
-
-### Example API Usage
-
-```bash
-# Register event
-curl -X POST http://localhost:3000/api/register \
-  -H "Content-Type: application/json" \
-  -d '{"userAddress": "0x123...", "username": "johndoe"}'
-
-# Login event
-curl -X POST http://localhost:3000/api/login \
-  -H "Content-Type: application/json" \
-  -d '{"userAddress": "0x123..."}'
-```
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/register` | Log registration event |
+| POST | `/api/login` | Log login event |
+| POST | `/api/resetPassword` | Log password reset |
+| POST | `/api/deactivate` | Log account deactivation |
 
 ---
 
-## 📜 Smart Contract
+## 📜 Smart Contract — Key Functions
 
-### Contract: AuthChain
+| Function | Description |
+|----------|-------------|
+| `register(username, password)` | Create on-chain identity |
+| `login(password)` | Authenticate against contract |
+| `resetPassword(newPassword)` | Update stored credential |
+| `deactivateAccount()` | Self-deactivate |
+| `banUser(address)` | Admin: ban a wallet address |
 
-**Location**: `Smart Contract/Authentication.sol`
-
-#### Key Functions
-
-| Function | Description | Visibility |
-|----------|-------------|------------|
-| `register(string _username, string _password)` | Register new user | Public |
-| `login(string _password)` | Authenticate user | Public |
-| `resetPassword(string _newPassword)` | Update password | Public |
-| `deactivateAccount()` | Deactivate account | Public |
-| `banUser(address _user)` | Ban a user | Admin only |
-| `getUser(address _userAddress)` | Get user details | Public |
-
-#### Events
-
-- `UserSignedUp(address indexed userAddress, string username)`
-- `LoginAttempt(address indexed userAddress, bool success)`
-- `PasswordReset(address indexed userAddress)`
-- `UserDeactivated(address indexed userAddress)`
-- `UserBanned(address indexed userAddress)`
-
-#### Security Notes
-
-⚠️ **Important**: This contract stores passwords in plain text for demonstration purposes. In production:
-- Use password hashing (e.g., bcrypt)
-- Consider using zero-knowledge proofs
-- Implement proper access controls
-- Use hardware wallets for admin functions
+> ⚠️ Passwords are stored in plain text for demonstration. Production use requires hashing or zero-knowledge proofs.
 
 ---
 
-## 🌐 Frontend Pages
+## 🔒 Security Notes
 
-### 1. Dashboard (`index.html`)
-- Main entry point
-- Wallet connection
-- User profile display
-- Admin ban functionality
-
-### 2. Registration (`register.html`)
-- New user registration form
-- Username and password input
-- MetaMask integration
-
-### 3. Login (`login.html`)
-- User authentication
-- Password verification via smart contract
-
-### 4. Reset Password (`resetPassword.html`)
-- Password reset functionality
-- Security verification
-
-### 5. Deactivate Account (`deactivateAccount.html`)
-- Account self-deactivation
-- Data removal from blockchain
-
----
-
-## 🗄 Database Schema
-
-### Events Table
-
-```sql
-CREATE TABLE events (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    event_type TEXT NOT NULL,
-    user_address TEXT NOT NULL,
-    username TEXT,
-    timestamp TEXT NOT NULL
-);
-```
-
-### Log File Format
-
-```
-[2024-01-15T10:30:00.000Z] [REGISTER] User Address: 0x123..., Username: johndoe
-[2024-01-15T10:35:00.000Z] [LOGIN] User Address: 0x123...
-[2024-01-15T10:40:00.000Z] [RESET_PASSWORD] User Address: 0x123...
-```
-
----
-
-## 🔒 Security Considerations
-
-1. **Smart Contract Security**
-   - Plain text passwords (demo only - use hashing in production)
-   - Admin functions properly restricted
-   - Input validation implemented
-
-2. **Backend Security**
-   - Input sanitization
-   - Error handling
-   - Secure database connections
-
-3. **Frontend Security**
-   - Client-side validation
-   - Secure wallet interactions
-   - HTTPS recommended for production
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+- This project is a research prototype, not production-ready
+- See `Research Paper.pdf` for the full security analysis and threat model
+- Recommended improvements: ZK-SNARKs for credential verification, hardware wallet admin keys
 
 ---
 
 ## 📄 License
 
-This project is licensed under the **MIT License** - see the LICENSE file for details.
+MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
 ## 👤 Author
 
-- **Your Name** - Initial work
+**Harshita Guduru** — [GitHub](https://github.com/guduruharshita) · [LinkedIn](https://linkedin.com/in/harshita-guduru)
 
 ---
 
-## 🙏 Acknowledgments
-
-- [Ethers.js Documentation](https://docs.ethers.io/)
-- [Solidity Documentation](https://docs.soliditylang.org/)
-- [Express.js Documentation](https://expressjs.com/)
-- [MetaMask Developer Documentation](https://docs.metamask.io/)
-
----
-
-## 📞 Support
-
-If you encounter any issues or have questions:
-
-1. Check the [Issues](https://github.com/yourusername/blockchain-login-system/issues) page
-2. Create a new issue with detailed description
-3. Contact the maintainers
-
----
-
-**Made with ❤️ and 🔗 Blockchain Technology**
-
+*Made with Ethereum and Node.js*
