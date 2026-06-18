@@ -1,42 +1,42 @@
 # Dependencies
 node_modules/
-Backend/node_modules/
-
-# Logs
-*.log
-authchain_logs.txt
-npm-debug.log*
-
-# Database
-*.db
-authchain.db
-*.sqlite
+**/node_modules/
 
 # Environment
 .env
-.env.local
-.env.*.local
+**/.env
+!.env.example
+**/.env.example
+
+# Build outputs
+dist/
+**/dist/
+artifacts/
+cache/
+typechain-types/
+
+# Database
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+*.log
+logs/
+authchain_logs.txt
 
 # IDE
 .vscode/
 .idea/
 *.swp
-*.swo
-*~
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Build
-dist/
-build/
-
-# Test
+# Test coverage
 coverage/
 .nyc_output/
 
-# Temporary
-tmp/
-temp/
-
+# Hardhat
+/deployments/localhost/
