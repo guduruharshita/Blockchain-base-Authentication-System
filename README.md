@@ -7,7 +7,6 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?logo=typescript)](tsconfig.json)
 [![Contract Tests](https://img.shields.io/badge/Contract%20Tests-23%20passing-success?logo=mocha)](test/)
 [![OpenZeppelin](https://img.shields.io/badge/OpenZeppelin-v5-4E5EE4)](contracts/AuthChain.sol)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **Enterprise-grade decentralized authentication system** built on Ethereum.  
 Users authenticate with their wallets via EIP-191 personal signatures — **no passwords stored anywhere**, on-chain or off-chain. The smart contract manages an on-chain identity registry; the backend issues JWTs after cryptographic signature verification.
