@@ -470,3 +470,7 @@ cd frontend && npm run typecheck
 | **CI/CD** | GitHub Actions — contracts + backend + frontend in parallel jobs |
 | **Hardhat** | Compile, deploy scripts, Etherscan verification, gas reporting |
 | **OpenZeppelin** | v5 contracts with constructor-style ownership |
+
+---
+
+**Harshita Guduru** — [GitHub](https://github.com/guduruharshita) · [LinkedIn](https://linkedin.com/in/guduruharshita) · [Email](mailto:guduruharshita2001@gmail.com)
