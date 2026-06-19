@@ -5,10 +5,16 @@
 [![Node.js](https://img.shields.io/badge/Node.js-22-339933?logo=node.js)](backend/package.json)
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react)](frontend/package.json)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?logo=typescript)](tsconfig.json)
+[![Contract Tests](https://img.shields.io/badge/Contract%20Tests-23%20passing-success?logo=mocha)](test/)
+[![OpenZeppelin](https://img.shields.io/badge/OpenZeppelin-v5-4E5EE4)](contracts/AuthChain.sol)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **Enterprise-grade decentralized authentication system** built on Ethereum.  
 Users authenticate with their wallets via EIP-191 personal signatures — **no passwords stored anywhere**, on-chain or off-chain. The smart contract manages an on-chain identity registry; the backend issues JWTs after cryptographic signature verification.
+
+## Why Passwordless Blockchain Auth
+
+Passwords are the single largest attack surface in web security — credential stuffing, phishing, and database breaches all target the same stored secret. AuthChain eliminates that attack surface entirely. Your Ethereum private key never leaves your device; only a cryptographic signature is transmitted. The backend recovers your address from the signature using `ethers.verifyMessage()` — mathematically proving identity without storing any secret. On-chain `recordLogin()` timestamps create an immutable audit trail that no centralized database can falsify or delete.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -451,6 +457,16 @@ cd frontend && npm run typecheck
 | Reentrancy | `ReentrancyGuard` on all state-changing contract functions |
 | Admin privilege escalation | Single owner controls admin roster; `Pausable` for emergencies |
 | SQLite injection | `better-sqlite3` parameterized queries throughout |
+
+---
+
+## Future Improvements
+
+- **Multi-chain support** — Make the contract address and chain ID configurable per tenant to support Polygon, Arbitrum, and Base alongside Ethereum mainnet
+- **Session key delegation** — Implement EIP-7702 session keys so users can authorize temporary keys for automated actions without repeated MetaMask prompts
+- **Social recovery** — Email-based account recovery via EIP-4337 bundler so users who lose their wallet can reclaim their username through a trusted guardian
+- **Admin dashboard** — Real-time audit log viewer with per-address activity graphs, ban management UI, and CSV export built in React
+- **Hardware wallet support** — WebUSB/WebHID integration for Ledger and Trezor as an alternative to MetaMask
 
 ---
 
